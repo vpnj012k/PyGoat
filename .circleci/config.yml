@@ -3,14 +3,20 @@ jobs:
     executor: python/default
     steps:
       - checkout
+      
+      - run:
+          command: |
+            cd app
+          name: change to app dir
+      
       - python/install-packages:
-          pkg-manager: pip
+          pkg-manager: pipenv
       - python/install-packages:
           pip-dependency-file: dev-requirements.txt
-          pkg-manager: pip
+          pkg-manager: pipenv
       - python/install-packages:
           args: truffleHog
-          pkg-manager: pip
+          pkg-manager: pipenv
           pypi-cache: false
       - run:
           command: |
