@@ -18,10 +18,7 @@ jobs:
           args: truffleHog
           pkg-manager: pipenv
           pypi-cache: false
-      - run:
-          command: |
-            pytest --version
-          name: Test
+
       - run:
           command: |
             truffelHog --regex .
