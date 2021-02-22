@@ -1,52 +1,44 @@
+version: 2.1
 jobs:
-  build:
-    executor: python/default
-    working_directory: ~/project
+  build_test:
+    docker:
+      - image: circleci/python:3.7.4
     steps:
       - checkout
-      
       - run:
-          command: |
-            cd app
-          name: change to app dir
-      
-      - python/install-packages:
-          pkg-manager: pipenv
-      - python/install-packages:
-          pip-dependency-file: dev-requirements.txt
-          pkg-manager: pipenv
-      - python/install-packages:
-          args: truffleHog
-          pkg-manager: pipenv
-          pypi-cache: false
-
-
-
-
-      - python/install-packages:
-          args: truffleHog
-          pkg-manager: pipenv
+          name: change to app directory
+          command: cd apps  i
       - run:
+          name: Install Python Dependencies
           command: |
-            pipenv run truffleHog ~/project --regex --entropy DO ENTROPY --json >> ~/project/secrets-check.json
-          name: Test secret search 
-      - store_artifacts:
-          path: ~/project/secrets-check.json
-          destination: artifact-file
-
-
-
-
+            echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
+            pip install --user -r requirements.txt
       - run:
+          name: Run Unit Tests
           command: |
-            pytest --version
-          name: Test
-
-
-orbs:
-  python: circleci/python@1.1.0
-version: 2.1
+            pytest
+  build_push_image:
+    docker:
+      - image: circleci/python:3.7.4
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run:
+          name: Build and Push Docker image to Docker Hub
+          command: |
+            echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV
+            echo 'export TAG=${CIRCLE_SHA1}' >> $BASH_ENV
+            echo 'export IMAGE_NAME=PyGost-test1' >> $BASH_ENV && source $BASH_ENV
+            pip install --user -r requirements.txt
+            pyinstaller -F hello_world.py
+            docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push $DOCKER_LOGIN/$IMAGE_NAME
 workflows:
-  main:
+  build_test_deploy:
     jobs:
-      - build
+      - build_test
+      - build_push_image:
+          requires:
+            - build_test
