@@ -28,7 +28,7 @@ jobs:
           pkg-manager: pipenv
       - run:
           command: |
-            pipenv run truffleHog ~/project --regex --json >> ~/project/secrets-check.json
+            pipenv run truffleHog ~/project --regex --sarif --json >> ~/project/secrets-check.json
           name: Test secret search 
       - store_artifacts:
           path: ~/project/secrets-check.json
