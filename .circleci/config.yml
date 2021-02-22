@@ -28,7 +28,7 @@ jobs:
             echo 'export IMAGE_NAME=orb-snyk' >> $BASH_ENV && source $BASH_ENV
             pip install --user -r app/requirements.txt
             
-            docker build -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
+            docker build -t $DOCKER_LOGIN/$IMAGE_NAME .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push $DOCKER_LOGIN/$IMAGE_NAME
 workflows:
