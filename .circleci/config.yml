@@ -1,6 +1,7 @@
 jobs:
   build:
     executor: python/default
+    working_directory: ~/project
     steps:
       - checkout
       
@@ -19,14 +20,28 @@ jobs:
           pkg-manager: pipenv
           pypi-cache: false
 
+
+
+
+      - python/install-packages:
+          args: truffleHog
+          pkg-manager: pipenv
+      - run:
+          command: |
+            pipenv run truffleHog ~/project --regex --json >> ~/project/secrets-check.json
+          name: Test secret search 
+      - store_artifacts:
+          path: ~/project/secrets-check.json
+          destination: artifact-file
+
+
+
+
       - run:
           command: |
             pytest --version
           name: Test
-      - run:
-          command: |
-            truffelHog --regex .
-          name: Test truffleHog
+
 
 orbs:
   python: circleci/python@1.1.0
