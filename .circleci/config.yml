@@ -28,11 +28,11 @@ jobs:
           name: Build and Push Docker image to Docker Hub
           command: |
             echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV
-            echo 'export TAG=${CIRCLE_SHA1}' >> $BASH_ENV
+            
             echo 'export IMAGE_NAME=pygoat1' >> $BASH_ENV && source $BASH_ENV
             pip3 install --user -r app/requirements.txt
             
-            docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
+            docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:pygoat101 .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push $DOCKER_LOGIN/$IMAGE_NAME
 workflows:
