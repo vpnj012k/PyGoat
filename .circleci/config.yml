@@ -7,8 +7,8 @@ jobs:
       - checkout
       - run:
           name: change to app directory
-          command: 
-            cd app |
+          command: |
+            cd app 
       
       - run:
           name: Install Python Dependencies
