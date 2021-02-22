@@ -15,6 +15,10 @@ jobs:
           command: |
             echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
             pip3 install --user -r app/requirements.txt
+      - run:
+          name: Run Unit Tests
+          command: |
+            py.test
 
   build_push_image:
     docker:
@@ -30,7 +34,7 @@ jobs:
             echo 'export TAG=${CIRCLE_SHA1}' >> $BASH_ENV
             echo 'export IMAGE_NAME=PyGoat-test1' >> $BASH_ENV && source $BASH_ENV
             pip3 install --user -r app/requirements.txt
-            pyinstaller -F hello_world.py
+            
             docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push $DOCKER_LOGIN/$IMAGE_NAME
