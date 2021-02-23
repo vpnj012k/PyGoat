@@ -28,9 +28,9 @@ jobs:
             echo 'export IMAGE_NAME=pygoat-test1' >> $BASH_ENV && source $BASH_ENV
             pip install --user -r app/requirements.txt
             
-            docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
+            docker build -t $DOCKER_LOGIN-dev/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push $DOCKER_LOGIN/$IMAGE_NAME
+            docker push $DOCKER_LOGIN-dev/$IMAGE_NAME
 workflows:
   build_test_deploy:
     jobs:
